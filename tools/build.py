@@ -223,7 +223,7 @@ def shell(title, body, desc, path="/"):
 """
 
 
-NAV = '<nav class="foot-nav" aria-label="More"><a href="/">Project</a> · <a href="/protocol.html">Protocol</a> · <a href="/codebook.html">Codebook</a> · <a href="/cite.html">How to cite</a> · <a href="/privacy.html">Privacy</a> · <a href="/feed.xml">Feed</a></nav>'
+NAV = '<nav class="foot-nav" aria-label="More"><a href="/">Project</a> · <a href="/protocol.html">Protocol</a> · <a href="/codebook.html">Codebook</a> · <a href="/cite.html">How to cite</a> · <a href="/privacy.html">Privacy</a> · <a href="/feed.xml">Feed</a> · <a href="https://github.com/govworg/kailog-tools">Source</a> · <a href="https://alpq.us">ALPQ</a></nav>'
 
 
 def main():
