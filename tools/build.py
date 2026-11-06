@@ -192,7 +192,7 @@ def protocol_html():
 </section>"""
 
 
-def shell(title, body, desc):
+def shell(title, body, desc, path="/"):
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -200,6 +200,17 @@ def shell(title, body, desc):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
+<link rel="canonical" href="https://kailog.org{path}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kai Log">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="https://kailog.org{path}">
+<meta property="og:image" content="https://kailog.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kai Log: a small nonprofit working with an AI assistant under human oversight, one task at a time.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="Kai Log updates">
 <link rel="stylesheet" href="/site.css">
@@ -243,7 +254,7 @@ def main():
                               ("cite", "How to cite", open(os.path.join(ROOT, "content", "cite.html")).read()),
                               ("privacy", "Privacy", open(os.path.join(ROOT, "content", "privacy.html")).read())):
         open(os.path.join(SITE, slug + ".html"), "w", encoding="utf-8").write(
-            shell(f"{title} · Kai Log", f'<div class="wrap">{head_mark}{frag}{footer}</div>', desc))
+            shell(f"{title} · Kai Log", f'<div class="wrap">{head_mark}{frag}{footer}</div>', desc, f"/{slug}.html"))
     os.makedirs(os.path.join(SITE, "schema"), exist_ok=True)
     shutil.copy(os.path.join(ROOT, "schema", "entry.schema.json"), os.path.join(SITE, "schema", "entry.schema.json"))
     os.makedirs(os.path.join(SITE, "protocol"), exist_ok=True)

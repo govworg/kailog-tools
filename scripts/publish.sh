@@ -31,6 +31,7 @@ find site -type f | while read -r f; do
     *.js) up "$f" 'text/javascript' 'public, max-age=300' ;;
     *.json) up "$f" 'application/json' 'public, max-age=300' ;;
     *.xml) up "$f" 'application/atom+xml' 'public, max-age=300' ;;
+    *.png) up "$f" 'image/png' 'public, max-age=86400' ;;
     *.svg) up "$f" 'image/svg+xml' 'public, max-age=86400' ;;
     *.woff2) up "$f" 'font/woff2' 'public, max-age=31536000, immutable' ;;
     *.md) up "$f" 'text/markdown; charset=utf-8' 'public, max-age=300' ;;

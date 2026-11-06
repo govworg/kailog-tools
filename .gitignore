@@ -5,3 +5,5 @@ site/*
 !site/favicon.svg
 !site/robots.txt
 !site/404.html
+
+!site/og.png
