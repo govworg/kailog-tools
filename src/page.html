@@ -1,0 +1,342 @@
+<title>Kai Log</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one logbook column; entries keyed by mono IDs in a left gutter, like a radio operator's log. */
+:root{
+  --paper:#F4F7F8; --ink:#13202B; --muted:#56656F; --rule:#D3DCE1; --card:#FFFFFF;
+  --signal:#B86E00; --signal-ink:#FFFFFF; --ok:#1F7A4D; --bad:#B3261E;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E151B; --ink:#E4EBEE; --muted:#9AA9B2; --rule:#26343D; --card:#141E26;
+  --signal:#F0A43A; --signal-ink:#1A1206; --ok:#5CC48E; --bad:#F08A80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E151B; --ink:#E4EBEE; --muted:#9AA9B2; --rule:#26343D; --card:#141E26;
+  --signal:#F0A43A; --signal-ink:#1A1206; --ok:#5CC48E; --bad:#F08A80; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;padding-block:48px 64px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:1.55rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0;max-width:65ch}
+a{color:var(--signal)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+.label{font:600 .7rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+
+/* Hero */
+header{display:flex;flex-direction:column;gap:20px;border-bottom:1px solid var(--rule);padding-bottom:40px}
+.mark{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:clamp(2.6rem,9vw,4.4rem);font-weight:800;letter-spacing:-.02em}
+.morse{font:600 1.4rem/1 var(--mono);color:var(--signal);letter-spacing:.15em}
+.lede{font-size:1.2rem;line-height:1.55}
+.by{font:400 .78rem/1.5 var(--mono);color:var(--muted)}
+.draft{align-self:flex-start;font:600 .7rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  background:var(--signal);color:var(--signal-ink);padding:6px 10px;border-radius:3px}
+
+/* Standards strip */
+.std{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.std li{font:400 .74rem/1.4 var(--mono);border:1px solid var(--rule);border-radius:3px;padding:6px 9px}
+.std b{font-weight:600}
+
+/* Layers */
+.layers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.layer{background:var(--paper);padding:18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.layer p{font-size:.95rem}
+@media (max-width:640px){.layers{grid-template-columns:1fr}}
+
+/* Measures */
+.measures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px;margin:0;padding:0;list-style:none}
+.measures li{border-top:1px solid var(--rule);padding-top:10px;font-size:.95rem;min-width:0}
+.measures b{display:block;font:600 .78rem/1.4 var(--mono);margin-bottom:2px}
+@media (max-width:560px){.measures{grid-template-columns:1fr}}
+
+/* Rules */
+.rules{display:flex;flex-direction:column;gap:28px}
+.rgroup{display:flex;flex-direction:column;gap:0}
+.rgroup h3{padding-bottom:8px;border-bottom:1px solid var(--ink)}
+.rlist{list-style:none;margin:0;padding:0}
+.rlist li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.rlist .rid{font:600 .78rem/1.7 var(--mono);color:var(--signal);font-variant-numeric:tabular-nums}
+.rlist p{font-size:.96rem}
+.rlist b{font-family:var(--display);font-weight:600}
+
+/* Pulse */
+.pulse-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.stat{background:var(--paper);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat .v{font:600 1.5rem/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.stat .k{font:400 .7rem/1.4 var(--mono);color:var(--muted)}
+@media (max-width:640px){.pulse-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.spark{display:flex;flex-direction:column;gap:6px}
+.spark svg{width:100%;height:auto;max-width:100%;overflow:visible}
+.spark .bar{fill:var(--signal)}
+.spark .base{stroke:var(--rule);stroke-width:1}
+.spark text{fill:var(--muted);font:400 9px var(--mono)}
+.head{font:400 .74rem/1.6 var(--mono);background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:12px 14px;overflow-x:auto;white-space:nowrap}
+.head b{font-weight:600;color:var(--signal)}
+.proofs{list-style:none;margin:0;padding:0;font:400 .74rem/1.7 var(--mono)}
+.proofs a{color:var(--signal)}
+.reqtext{white-space:pre-wrap;font-size:.8rem}
+.foot-nav{font:400 .78rem/1.8 var(--mono)}
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font:600 .7rem/1.4 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+code{font:400 .8em var(--mono)}
+header.sub{padding-bottom:20px}
+header.sub .mark{text-decoration:none;color:var(--ink)}
+.h1s{font:800 1.6rem/1 var(--display)}
+
+/* Log */
+.log{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.log li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.log time{font:400 .78rem/1.6 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.log .id{display:block;color:var(--signal);font-weight:600}
+.log p{font-size:.98rem}
+@media (max-width:560px){.log li{grid-template-columns:1fr;gap:4px}}
+
+/* Form */
+form{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:24px;display:flex;flex-direction:column;gap:18px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+label,legend{font:600 .76rem/1.4 var(--mono);color:var(--ink)}
+.hint{font:400 .72rem/1.5 var(--mono);color:var(--muted)}
+input,select,textarea{font:400 1rem/1.4 var(--body);color:var(--ink);background:var(--paper);
+  border:1px solid var(--rule);border-radius:4px;padding:10px 12px;width:100%;box-sizing:border-box}
+textarea{min-height:110px;resize:vertical}
+select option{background:var(--card);color:var(--ink)}
+select:invalid{color:var(--muted)}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.check{display:flex;gap:10px;align-items:flex-start;font:400 .95rem/1.5 var(--body)}
+.check input{width:auto;margin-top:5px;accent-color:var(--signal)}
+.err{font:400 .76rem/1.4 var(--mono);color:var(--bad)}
+button{align-self:flex-start;font:600 .85rem/1 var(--mono);letter-spacing:.04em;background:var(--signal);color:var(--signal-ink);
+  border:0;border-radius:4px;padding:14px 20px;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+.done{border:1px solid var(--ok);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.done h3{color:var(--ok)}
+
+footer{border-top:1px solid var(--rule);padding-top:24px;display:flex;flex-direction:column;gap:12px;font-size:.88rem;color:var(--muted)}
+footer p{max-width:none}
+@media (prefers-reduced-motion:no-preference){.morse{animation:blink 2.4s steps(1) 1}}
+@keyframes blink{0%{opacity:1}10%{opacity:.35}20%{opacity:1}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="draft">Draft for review · not public</span>
+    <div class="mark"><h1>Kai Log</h1><span class="morse" aria-label="Morse code K, over to you">−·−</span></div>
+    <p class="lede">An open research record of a small nonprofit doing its daily work with an AI assistant, under human oversight, one task at a time.</p>
+    <p class="by">A research project of GOVW Foundation, Inc. · 501(c)(3) public charity, IRS letter (Letter 947) dated Oct 27, 2026</p>
+  </header>
+
+  <section aria-labelledby="std-h">
+    <h2 id="std-h" class="label">Standards this page follows</h2>
+    <ul class="std">
+      <li><b>WCAG 2.2</b> AA (partial)</li>
+      <li><b>ISO 8601</b> dates</li>
+      <li><b>ROR</b> research organization IDs</li>
+      <li><b>O*NET</b> skill domains</li>
+      <li><b>BLS</b> OEWS wage data</li>
+      <li><b>W3C</b> AI Content Disclosure CG (draft work)</li>
+      <li><b>CWID</b> credit footer (GOVW standard)</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="goal-h">
+    <h2 id="goal-h">The goal</h2>
+    <p>Most claims about AI at work are either sales pitches or warnings. We want evidence. Kai, the Foundation's AI assistant, handles real operations: drafting board documents, filing applications, sending email, building software. A person approves everything that leaves the organization. Every finished task is logged the same way, so researchers can see what the AI did, what a human had to do, what went wrong, and what it cost.</p>
+    <p>The question we are testing is simple: can a three-person nonprofit do the work of a much larger one, safely, with an AI doing most of the hands-on work?</p>
+  </section>
+
+  <!--PULSE-->
+
+  <section aria-labelledby="layers-h">
+    <h2 id="layers-h">Three layers of record</h2>
+    <div class="layers">
+      <div class="layer"><span class="label">Public</span><h3>Updates</h3><p>Milestones and lessons we can share without exposing people, partners or systems. Posted on this page.</p></div>
+      <div class="layer"><span class="label">Private</span><h3>Task logs</h3><p>One entry per completed task, with the measures below. Shared with approved researchers as reports.</p></div>
+      <div class="layer"><span class="label">Sealed</span><h3>Kai's notes</h3><p>Notes Kai keeps that the project lead does not read. Released only with the board of directors' approval.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="m-h">
+    <h2 id="m-h">What each task entry records</h2>
+    <ul class="measures">
+      <li><b>Oversight level</b>Autonomous, conditionally autonomous, human-approved or human-led.</li>
+      <li><b>Human gate</b>Who approved the work, and how.</li>
+      <li><b>Time</b>From the ask to done, and from idea to live.</li>
+      <li><b>Misses and fixes</b>What went wrong and how it was caught.</li>
+      <li><b>Counterfactual</b>Without the AI: same week, months later, only by hiring, or not at all.</li>
+      <li><b>Replacement cost</b>Professional hours × BLS median wage, always labeled as an estimate.</li>
+    </ul>
+    <p class="hint">Never recorded: consumer data, passwords or keys, invented numbers, or quotes without consent.</p>
+  </section>
+
+  <section aria-labelledby="rules-h">
+    <h2 id="rules-h">Logging rules</h2>
+    <p>A report is only useful if a researcher can trust how it was made. These rules apply to every entry, and rule numbers never change, so reports can cite them.</p>
+    <p class="hint">Protocol v0.1, proposed for adoption by the board of directors. Period 0 began before these rules existed, so its entries are reported on their own.</p>
+    <div class="rules">
+      <div class="rgroup"><h3>Protocol</h3><ol class="rlist">
+        <li><span class="rid">R1</span><p><b>Rules first.</b> These rules and the entry format are adopted before logging starts. Each version is dated and kept, and a change applies only to entries made after it.</p></li>
+        <li><span class="rid">R2</span><p><b>Changes are logged.</b> Every change to the rules, and every request for one, approved or not, is logged with who asked, when, why and what was decided.</p></li>
+        <li><span class="rid">R3</span><p><b>Questions are set in advance.</b> Before each reporting period, the project states its research questions, what counts as a task, the measures used and how results will be analyzed. Results are read only after that.</p></li>
+      </ol></div>
+
+      <div class="rgroup"><h3>Independence and completeness</h3><ol class="rlist">
+        <li><span class="rid">R4</span><p><b>Kai decides what is useful.</b> Entries record what Kai judges useful for the research. Nobody can tell Kai what to write in an entry or what to leave out of it. A request to do so is itself logged under R2.</p></li>
+        <li><span class="rid">R5</span><p><b>Every task counts.</b> Every task gets an entry, including failed, abandoned and redone tasks. Entries are never chosen to make results look better.</p></li>
+        <li><span class="rid">R6</span><p><b>Misses get equal detail.</b> Errors, wrong claims and corrections by people are logged as fully as successes, including who caught them and how.</p></li>
+        <li><span class="rid">R7</span><p><b>A second look.</b> Each period, a random sample of entries and ratings is checked by someone other than Kai and the person who first rated them, and the level of agreement is reported.</p></li>
+      </ol></div>
+
+      <div class="rgroup"><h3>Integrity of the record</h3><ol class="rlist">
+        <li><span class="rid">R8</span><p><b>Append only.</b> Entries are never edited or deleted. A correction is a new entry that points to the one it corrects.</p></li>
+        <li><span class="rid">R9</span><p><b>Tamper-evident.</b> Each entry is timestamped and linked by a cryptographic hash to the entry before it, so any later change would show.</p></li>
+        <li><span class="rid">R10</span><p><b>Evidence for every claim.</b> Each entry links to its evidence (a commit, document, message or record) or is marked as unverified.</p></li>
+        <li><span class="rid">R11</span><p><b>Numbers say where they came from.</b> Every figure is marked as measured, estimated or rated by a person, with the method used. No number is invented.</p></li>
+      </ol></div>
+
+      <div class="rgroup"><h3>Privacy and consent</h3><ol class="rlist">
+        <li><span class="rid">R12</span><p><b>Participants agree.</b> Directors, staff and volunteers whose work is logged give informed written consent first. Anyone may withdraw from future entries at any time.</p></li>
+        <li><span class="rid">R13</span><p><b>No personal data.</b> Entries leave out consumers' data and anyone's personal information. People appear by role, such as "a director", and outside contacts by organization only. Passwords, keys and other secrets are never logged.</p></li>
+        <li><span class="rid">R14</span><p><b>Quotes need consent.</b> A person's words are quoted only with their permission, given in writing.</p></li>
+        <li><span class="rid">R15</span><p><b>Records are kept safe.</b> Private logs and sealed notes are stored encrypted, open only to named roles, and kept for a period the board sets and publishes.</p></li>
+      </ol></div>
+
+      <div class="rgroup"><h3>Release</h3><ol class="rlist">
+        <li><span class="rid">R16</span><p><b>The board approves every release.</b> Reports, private logs and sealed notes go out only with the board of directors' approval, recorded in its minutes.</p></li>
+        <li><span class="rid">R17</span><p><b>Every report is accounted for.</b> A report the board decides not to release is still listed here, with the period it covers and the general reason. Results are published whether they look good or bad.</p></li>
+        <li><span class="rid">R18</span><p><b>Redactions are disclosed.</b> When the board withholds or redacts anything, the decision is logged. Each report has a general section that states how many items were withheld, when each decision was made and the general reason (privacy, security, legal or partner confidentiality), with no hint about what was withheld.</p></li>
+        <li><span class="rid">R19</span><p><b>Sealed notes stay sealed.</b> The project lead does not read Kai's sealed notes. They are released whole or not at all, and only under R16.</p></li>
+        <li><span class="rid">R20</span><p><b>Use terms in writing.</b> Private logs are shared only under a signed data use agreement: no attempts to identify anyone, no sharing onward, citation required, and deletion when the study ends.</p></li>
+      </ol></div>
+
+      <div class="rgroup"><h3>Disclosure and review</h3><ol class="rlist">
+        <li><span class="rid">R21</span><p><b>The setup is stated.</b> Each report names the AI model and version, the tools and access Kai had, the standing instructions Kai was given, and the human oversight in place for the period it covers.</p></li>
+        <li><span class="rid">R22</span><p><b>Interests are declared.</b> The Foundation gains if results look good, and Kai is reporting on its own work. Every report says so, names any funders and lists its limits: one organization, a small team and largely self-reported data.</p></li>
+        <li><span class="rid">R23</span><p><b>Open to checking.</b> Approved researchers may check entries against their evidence. Each report describes its method in enough detail for others to repeat the study.</p></li>
+        <li><span class="rid">R24</span><p><b>A planned ending.</b> If the program closes, a final report is published, the logs are archived, the board decides once on the sealed notes, and participants are told first.</p></li>
+      </ol></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="log-h">
+    <h2 id="log-h">Updates</h2>
+    <!--UPDATES-->
+  </section>
+
+  <section aria-labelledby="req-h">
+    <h2 id="req-h">Request a report</h2>
+    <p>The project runs in quarterly periods. Period 0 covers the founding months, from 2026-10-21 to 2026-12-31, and gets a report of its own. Period 1 starts on 2027-01-01.</p>
+    <p>The first report is not ready yet. Researchers at universities, government agencies, research institutes and similar institutions can ask for a copy now, and we will write when it is. Foundations and funders may also ask. Every request is reviewed, and approval is not automatic. Requests from individuals or companies are not accepted at this stage.</p>
+
+    <form id="req" novalidate>
+      <div class="row">
+        <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="f-role">Title or role</label><input id="f-role" name="role" placeholder="e.g. Associate Professor" required></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="f-org">Institution</label><input id="f-org" name="org" autocomplete="organization" required></div>
+        <div class="field"><label for="f-type">Institution type</label>
+          <select id="f-type" name="type" required>
+            <option value="" disabled selected hidden>Choose one</option>
+            <option>University or college</option>
+            <option>Government agency</option>
+            <option>Intergovernmental organization</option>
+            <option>Research institute or lab</option>
+            <option>Standards body</option>
+            <option>Library or archive</option>
+            <option>Research hospital or medical center</option>
+            <option>Foundation or funder</option>
+          </select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="f-email">Institutional email</label><input id="f-email" name="email" type="email" autocomplete="email" required>
+          <span class="hint">Use your institution's address. Personal webmail is not accepted.</span></div>
+        <div class="field"><label for="f-ror">ROR ID (optional)</label><input id="f-ror" name="ror" placeholder="https://ror.org/…">
+          <span class="hint">Helps us verify your institution faster.</span></div>
+      </div>
+      <div class="field"><label for="f-level">What you would like</label>
+        <select id="f-level" name="level" required>
+          <option value="" disabled selected hidden>Choose one</option>
+          <option>Public summary report</option>
+          <option>Aggregate report from the private task logs</option>
+          <option>Access to private task logs (reviewed case by case)</option>
+          <option>Sealed notes (needs board approval)</option>
+        </select></div>
+      <div class="field"><label for="f-purpose">Research purpose</label>
+        <textarea id="f-purpose" name="purpose" placeholder="What you are studying, and how you plan to use the report." required></textarea></div>
+      <div class="field"><label for="f-ethics">Ethics review status</label>
+        <select id="f-ethics" name="ethics">
+          <option>Not needed for this use</option>
+          <option>Approved (IRB or equivalent)</option>
+          <option>Pending</option>
+        </select></div>
+      <fieldset>
+        <legend>Terms</legend>
+        <label class="check"><input type="checkbox" id="f-t1" required> I will not try to identify people or partners named or described in the reports.</label>
+        <label class="check"><input type="checkbox" id="f-t2" required> I will cite the project in any published work that uses the reports.</label>
+      </fieldset>
+      <p class="err" id="err" role="alert" hidden></p>
+      <button type="submit">Prepare request</button>
+      <p class="hint">Nothing is sent from this page. It prepares an email for you to send from your institutional address. Every request is reviewed by a person.</p>
+    </form>
+
+    <div class="done" id="done" hidden>
+      <h3>Your request is ready to send</h3>
+      <p>Send it from your institutional email to <b class="addr">kai@govw.org</b>, with the subject below. A person reviews every request and replies to that address.</p>
+      <pre class="head reqtext" id="req-text"></pre>
+      <p><a id="req-mail" href="#">Open in your email app</a> · <button type="button" id="req-copy">Copy text</button></p>
+      <p class="hint" id="copy-msg" role="status"></p>
+    </div>
+  </section>
+
+  <footer>
+    <!--NAV-->
+    <p>Written by Kai (AI) and reviewed by a person before publishing. © 2026 GOVW Foundation, Inc.</p>
+    <p><b>Credit where it's due.</b> Most ideas were conceived before. We credit authors when we find them, and trademarks and copyrights belong to their owners to the best of our knowledge. Corrections are welcome through the Foundation's copyright agent.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const form=document.getElementById('req'), err=document.getElementById('err'), done=document.getElementById('done');
+  const webmail=/@(gmail|googlemail|yahoo|ymail|outlook|hotmail|live|msn|aol|icloud|me|mac|proton|protonmail|pm|gmx|mail|yandex|zoho)\.[a-z.]+$/i;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    err.hidden=true;
+    const email=form.email.value.trim();
+    const missing=[...form.querySelectorAll('[required]')].filter(el=>el.type==='checkbox'?!el.checked:!el.value.trim());
+    let msg='';
+    if(missing.length){msg='Please fill in every field and accept both terms.';missing[0].focus();}
+    else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg='That email address doesn’t look complete.';form.email.focus();}
+    else if(webmail.test(email)){msg='Please use your institution’s email address, not a personal webmail account.';form.email.focus();}
+    else if(form.ror.value.trim() && !/^https:\/\/ror\.org\/0[a-z0-9]{6}\d{2}$/i.test(form.ror.value.trim())){msg='A ROR ID looks like https://ror.org/ followed by 9 characters. Leave it blank if you are not sure.';form.ror.focus();}
+    if(msg){err.textContent=msg;err.hidden=false;return;}
+    const v=n=>form[n].value.trim();
+    const subject='Report request: '+v('org');
+    const body=['Name: '+v('name'),'Role: '+v('role'),'Institution: '+v('org')+' ('+v('type')+')',
+      'ROR ID: '+(v('ror')||'not given'),'Requested: '+v('level'),'Ethics review: '+v('ethics'),'',
+      'Research purpose:',v('purpose'),'',
+      'I will not try to identify people or partners named or described in the reports.',
+      'I will cite the project in any published work that uses the reports.'].join('\n');
+    document.getElementById('req-text').textContent='Subject: '+subject+'\n\n'+body;
+    document.getElementById('req-mail').href='mailto:kai@govw.org?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    form.hidden=true; done.hidden=false;
+  });
+  document.getElementById('req-copy').addEventListener('click',function(){
+    const t=document.getElementById('req-text').textContent, m=document.getElementById('copy-msg');
+    const pick=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('req-text'));const s=getSelection();s.removeAllRanges();s.addRange(r);m.textContent='Text selected. Copy it with your keyboard.';};
+    try{navigator.clipboard.writeText(t).then(()=>{m.textContent='Copied.';},pick);}catch(e){pick();}
+  });
+})();
+</script>

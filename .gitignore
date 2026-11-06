@@ -1,0 +1,7 @@
+__pycache__/
+# Built by tools/build.py (only static assets are kept in git)
+site/*
+!site/fonts/
+!site/favicon.svg
+!site/robots.txt
+!site/404.html

@@ -1,0 +1,8 @@
+{
+  "threshold": 2,
+  "holders": [
+    {"role": "director (Secretary)", "recipient": "age1REPLACE_WITH_PUBLIC_KEY"},
+    {"role": "director (Treasurer)", "recipient": "age1REPLACE_WITH_PUBLIC_KEY"},
+    {"role": "independent contact", "recipient": "age1REPLACE_WITH_PUBLIC_KEY"}
+  ]
+}
